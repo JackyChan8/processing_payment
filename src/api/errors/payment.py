@@ -3,9 +3,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarHTTPException
 
-from src.api.schemas import response_schemas
 from src.core import logger
 from src.exceptions import payment_exception
+from src.schemas import response_schemas
 
 
 def failed(

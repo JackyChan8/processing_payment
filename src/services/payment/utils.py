@@ -1,7 +1,7 @@
 import hashlib
 import json
 
-from src.api.schemas import payment_schemas
+from src.schemas import payment_schemas
 
 
 def compute_hash(data: payment_schemas.PaymentCreate):

@@ -31,6 +31,23 @@ class AppSettings(BaseSettings):
     RABBITMQ_PORT: int
     RABBITMQ_MANAGEMENT_PORT: int
 
+    # Workers
+    CONSUMER_PREFETCH: int = 20
+    CONSUMER_GRACEFUL_TIMEOUT_SECONDS: float = 30
+    MAX_ATTEMPTS: int = 3
+    RETRY_BASE_DELAY_SECONDS: float = 5
+    PROCESSING_SECONDS: int = 60
+    GATEWAY_MIN_DELAY_SECONDS: float = 2
+    GATEWAY_MAX_DELAY_SECONDS: float = 5
+    GATEWAY_SUCCESS_RATE: float = 0.9
+    WEBHOOK_SECRET: SecretStr
+    WEBHOOK_TIMEOUT_SECONDS: float = 5
+    WEBHOOK_ALLOW_PRIVATE_NETWORKS: bool = False
+    OUTBOX_BATCH_SIZE: int = 200
+    OUTBOX_POLL_INTERVAL_SECONDS: float = 0.2
+    OUTBOX_RETENTION_HOURS: int = 24
+    OUTBOX_CLEANUP_INTERVAL_SECONDS: int = 300
+
     # Logs
     LOG_LEVEL: str = "INFO"
     LOG_DIR: str = "logs"
@@ -50,6 +67,15 @@ class AppSettings(BaseSettings):
             f"{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
 
+    def build_rabbitmq_url(self) -> str:
+        """
+        Генерирования ссылки RabbitMQ
+        """
+        return (
+            "amqp://"
+            f"{self.RABBITMQ_USER}:{self.RABBITMQ_PASSWORD.get_secret_value()}@"
+            f"{self.RABBITMQ_HOST}:{self.RABBITMQ_PORT}/"
+        )
 
     class Config:
         """

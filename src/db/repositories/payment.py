@@ -1,10 +1,11 @@
 import uuid
+from datetime import timedelta
 from decimal import Decimal
 
-from sqlalchemy import select
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
-from src.db.enums.payment import PaymentCurrencyEnum
+from src.db.enums.payment import PaymentCurrencyEnum, PaymentStatusEnum
 from src.db.models.payment import Payment
 from src.db.repositories.base import BaseRepository
 
@@ -66,3 +67,99 @@ class PaymentRepository(BaseRepository):
         Получения платежа
         """
         return await self.session.get(Payment, payment_id)
+
+    async def processing_start(
+        self,
+        payment_id: uuid.UUID,
+        seconds: int,
+    ) -> Payment | None:
+        """
+        Начало обработки платежа
+        """
+        query = (
+            update(Payment)
+            .where(
+                Payment.id == payment_id,
+                Payment.status == PaymentStatusEnum.PENDING,
+                or_(
+                    Payment.processing_started_at.is_(None),
+                    Payment.processing_started_at < func.now() - timedelta(seconds=seconds),
+                ),
+            )
+            .values(
+                processing_started_at=func.now(),
+            )
+            .returning(Payment)
+            .execution_options(populate_existing=True)
+        )
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
+
+    async def processing_reset(
+        self,
+        payment_id: uuid.UUID,
+    ):
+        """
+        Сброс обработки платежа в случае ошибки
+        """
+        query = (
+            update(Payment)
+            .where(
+                Payment.id == payment_id,
+                Payment.status == PaymentStatusEnum.PENDING,
+            )
+            .values(
+                processing_started_at=None,
+            )
+        )
+        await self.session.execute(query)
+
+    async def processing_finish(
+        self,
+        payment_id: uuid.UUID,
+        status: PaymentStatusEnum,
+        faile_reason: str | None,
+    ) -> Payment | None:
+        """
+        Конец обработки платежа
+        """
+        query = (
+            update(Payment)
+            .where(
+                Payment.id == payment_id,
+                Payment.status == PaymentStatusEnum.PENDING,
+            )
+            .values(
+                status=status,
+                faile_reason=faile_reason,
+                processed_at=func.now(),
+            )
+            .returning(Payment)
+            .execution_options(populate_existing=True)
+        )
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
+
+    async def webhook_call(
+        self,
+        payment_id: uuid.UUID,
+        *,
+        is_delivery: bool,
+    ):
+        """
+        Вызов вебхука
+        """
+        values = {
+            "webhook_attempts": Payment.webhook_attempts + 1,
+        }
+        if is_delivery:
+            values["webhook_delivered_at"] = func.now()
+
+        query = (
+            update(Payment)
+            .where(
+                Payment.id == payment_id,
+            )
+            .values(**values)
+        )
+        await self.session.execute(query)

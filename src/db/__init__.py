@@ -7,6 +7,8 @@ __all__ = (
     "PaymentOutboxRepository",
     "PaymentRepository",
     "PaymentStatusEnum",
+    "async_session_maker",
+    "engine",
     "get_async_session",
 )
 
@@ -22,4 +24,4 @@ from src.db.repositories.payment import PaymentRepository
 from src.db.repositories.payment_outbox import PaymentOutboxRepository
 
 # Session
-from src.db.session import get_async_session
+from src.db.session import async_session_maker, engine, get_async_session

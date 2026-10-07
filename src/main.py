@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from src.api import api_v1, payment_errors
 from src.core import logger, settings, shutdown_logging
-from src.db.session import engine
+from src.db import engine
 from src.middleware import RequestLogMiddleware
 
 

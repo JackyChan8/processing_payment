@@ -56,7 +56,7 @@ class RequestLogMiddleware:
             await self.app(scope, receive, send_wrapper)
         finally:
             # Трейсбек необработанного исключения залогирует сам uvicorn
-            logger.info(
+            await logger.ainfo(
                 "request_completed",
                 status=status,
                 duration_ms=round((time.perf_counter() - start) * 1000, 2),

@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     Enum,
     Index,
+    Integer,
     Numeric,
     String,
     Text,
@@ -71,10 +72,34 @@ class Payment(Base):
         nullable=False,
         default=PaymentStatusEnum.PENDING,
     )
+
+    faile_reason: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    processing_started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    webhook_attempts: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default="0",
+    )
+
+    webhook_delivered_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
     webhook_url: Mapped[str] = mapped_column(
         Text,
         nullable=False,
     )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

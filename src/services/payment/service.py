@@ -2,14 +2,14 @@ import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.schemas import payment_schemas
 from src.db import (
     PaymentOutboxRepository,
     PaymentRepository,
 )
 from src.exceptions import payment_exception
-from src.services.dto import PaymentCreateResult
-from src.services.utils import compute_hash
+from src.schemas import payment_schemas
+from src.services.payment.dto import PaymentCreateResult
+from src.services.payment.utils import compute_hash
 
 
 class PaymentService:

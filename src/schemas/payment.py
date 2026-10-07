@@ -57,7 +57,11 @@ class PaymentInfoGet(BaseModel):
     amount: Annotated[Decimal, Field(gt=0, max_digits=18, decimal_places=2, description="Сумма")]
     currency: PaymentCurrencyEnum = Field(description="Валюта")
     description: str = Field(min_length=1, max_length=500, description="Описание")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="Метаданные")
+    metadata: dict[str, Any] = Field(
+        default_factory=dict,
+        validation_alias=AliasChoices("metadata_", "metadata"),
+        description="Метаданные",
+    )
     status: PaymentStatusEnum = Field(description="Статус платежа")
     webhook_url: HttpUrl = Field(description="Webhook URL")
     created_at: datetime = Field(description="Дата создания")

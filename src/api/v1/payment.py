@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, Request, Response, status
 
 from src.api.dependencies import get_payment_service, security_dependencies
-from src.api.schemas import payment_schemas, response_schemas
 from src.core import logger
+from src.schemas import payment_schemas, response_schemas
 from src.services import PaymentService
 
 router = APIRouter(
@@ -42,7 +42,7 @@ async def payment_create(
         correlation_id=correlation_id,
     )
 
-    logger.info(
+    await logger.ainfo(
         "payment.accepted",
         payment_id=str(result.payment.id),
         replayed=not result.created,

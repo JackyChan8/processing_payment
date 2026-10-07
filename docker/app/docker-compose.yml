@@ -101,37 +101,37 @@ services:
       retries: 5
       start_period: 10s
 
-#   relay:
-#     <<: *app-common
-#     environment:
-#       <<: *app-env
-#       LOG_FILENAME: relay.log
-#     command: ["python", "-m", "src.workers.relay"]
-#     restart: unless-stopped
-#     depends_on:
-#       postgres:
-#         condition: service_healthy
-#       rabbitmq:
-#         condition: service_healthy
-#       migrate:
-#         condition: service_completed_successfully
-#     stop_grace_period: 30s
-#
-#   consumer:
-#     <<: *app-common
-#     environment:
-#       <<: *app-env
-#       LOG_FILENAME: consumer.log
-#     command: ["faststream", "run", "src.workers.consumer:app"]
-#     restart: unless-stopped
-#     depends_on:
-#       postgres:
-#         condition: service_healthy
-#       rabbitmq:
-#         condition: service_healthy
-#       migrate:
-#         condition: service_completed_successfully
-#     stop_grace_period: 40s
+  relay:
+    <<: *app-common
+    environment:
+      <<: *app-env
+      LOG_FILENAME: relay.log
+    command: ["python", "-m", "src.workers.relay"]
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    stop_grace_period: 30s
+
+  consumer:
+    <<: *app-common
+    environment:
+      <<: *app-env
+      LOG_FILENAME: consumer.log
+    command: ["faststream", "run", "src.workers.consumer:app"]
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    stop_grace_period: 40s
 
 volumes:
   postgres_data:
