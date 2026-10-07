@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# IDE
+.idea/
+.vscode/
+
+# Секреты и окружение
+.env
+*.pem
+secrets/
+
+# Прочее
+node_modules/
+*.log
+dist/
+build/
+tests/
+docs/

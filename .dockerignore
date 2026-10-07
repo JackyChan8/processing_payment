@@ -1,0 +1,39 @@
+# VCS
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# IDE
+.idea/
+.vscode/
+
+# Секреты и окружение
+.env
+.env.*
+*.pem
+secrets/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Прочее
+node_modules/
+*.log
+dist/
+build/
+README.md
+tests/
+docs/
