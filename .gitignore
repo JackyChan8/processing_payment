@@ -24,5 +24,4 @@ node_modules/
 *.log
 dist/
 build/
-tests/
 docs/

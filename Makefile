@@ -1,11 +1,12 @@
 COMPOSE      := docker compose -f docker/app/docker-compose.yml --env-file .env
 SERVICE      ?= api relay consumer
 POETRY       := poetry run
+UNITTEST     := $(POETRY) python -m unittest
 
 .DEFAULT_GOAL := help
 
 .PHONY: help env build up down restart ps logs scale migrate revision downgrade \
-        run-api run-consumer run-relay test test-integration lint fmt \
+        run-api run-consumer run-relay test test-integration test-unit lint fmt \
         shell psql rabbit-queues clean
 
 help:
@@ -69,11 +70,8 @@ run-consumer: ## Consumer локально
 run-relay: ## Outbox relay локально
 	$(POETRY) python -m src.workers.relay
 
-test: ## Unit-тесты
-	$(POETRY) pytest -m "not integration"
-
-test-integration: ## Интеграционные тесты (нужен запущенный postgres)
-	RUN_INTEGRATION=1 $(POETRY) pytest -m integration
+test-unit: ## Юнит-тесты
+	$(UNITTEST) discover -s tests/unit -t . -v
 
 lint: ## Проверка ruff
 	$(POETRY) ruff check src tests
